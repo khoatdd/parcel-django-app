@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    container: python:2.7
+    services:
+      postgres:
+        image: postgres:11-alpine
+        env:
+          POSTGRES_DB: notejam
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    - name: Run Code Analysis
+      run: |
+        git ls-files | grep -v 'migrations' | grep -v 'settings.py' | grep -v 'manage.py' | grep -E '.py$' | xargs pylint -E --load-plugins=pylint_django
+    - name: Run Unit Tests
+      run: |
+        python manage.py test
+    - name: Run Security Tests
+      run: |
+        python manage.py check --deploy --fail-level ERROR
