@@ -28,7 +28,8 @@ jobs:
         pip install -r requirements.txt
     - name: Run Code Analysis
       run: |
-        git ls-files | grep -v 'migrations' | grep -v 'settings.py' | grep -v 'manage.py' | grep -E '.py$' | xargs DJANGO_SETTINGS_MODULE=notejam.settings pylint -E --load-plugins=pylint_django
+        export DJANGO_SETTINGS_MODULE=notejam.settings pylint
+        git ls-files | grep -v 'migrations' | grep -v 'settings.py' | grep -v 'manage.py' | grep -E '.py$' | xargs -E --load-plugins=pylint_django
     - name: Run Unit Tests
       run: |
         python manage.py test
