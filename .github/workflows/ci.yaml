@@ -30,11 +30,21 @@ jobs:
       run: |
         export DJANGO_SETTINGS_MODULE=notejam.settings
         git ls-files | grep -v 'migrations' | grep -v 'settings.py' | grep -v 'manage.py' | grep -E '.py$' | xargs pylint -E --load-plugins=pylint_django
+      env:
+        DB_HOST: postgres
+        DB_NAME: notejam
+        DB_USER: user
+        DB_PASSWORD: pass
     - name: Run Unit Tests
       run: |
         cd notejam
         python manage.py migrate
         python manage.py test
+      env:
+        DB_HOST: postgres
+        DB_NAME: notejam
+        DB_USER: user
+        DB_PASSWORD: pass
     - name: Run Security Tests
       run: |
         cd notejam && python manage.py check --deploy --fail-level ERROR
