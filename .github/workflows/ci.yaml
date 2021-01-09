@@ -49,4 +49,4 @@ jobs:
         DB_PASSWORD: pass
     - name: Run Security Tests
       run: |
-        cd notejam && python manage.py check --deploy --fail-level ERROR
+        cd notejam && python manage.py check
