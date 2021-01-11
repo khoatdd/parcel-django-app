@@ -54,6 +54,7 @@ jobs:
         data: ${{ env.APP_TAG }}
         variable: APP_TAG
   deploy:
+    needs: build-push
     runs-on: ubuntu-latest
     container: alpine/helm:3.5.0-rc.2
     steps:
