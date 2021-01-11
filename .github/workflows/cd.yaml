@@ -9,7 +9,7 @@ on:
       - '**'
 
 env:
-  APP_REPO: parcel/notejam
+  DOCKER_REPO: khoatdd/notejam
 jobs:
   build-push:
     runs-on: ubuntu-latest
@@ -24,7 +24,7 @@ jobs:
       id: docker_meta
       uses: crazy-max/ghaction-docker-meta@v1
       with:
-        images: ${{ env.APP_REPO }} # list of Docker images to use as base name for tags
+        images: ${{ env.DOCKER_REPO }} # list of Docker images to use as base name for tags
         tag-sha: true # add git short SHA as Docker tag
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
@@ -76,7 +76,7 @@ jobs:
       id: deploy-staging
       if: github.ref == 'refs/heads/main'
       run: |
-        helm upgrade notejam-staging parcel/notejam --install --set image.repository=${APP_REPO} --set image.tag=$APP_TAG --kubeconfig=kube_config
+        helm upgrade notejam-staging parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=$APP_TAG --kubeconfig=kube_config
       continue-on-error: true
     - name: Rollback Staging
       if: steps.deploy-staging.outcome == 'failure'
@@ -86,7 +86,7 @@ jobs:
       id: deploy-prod
       if: github.ref == 'refs/heads/main'
       run: |
-        helm upgrade notejam-prod parcel/notejam --install --set image.repository=${APP_REPO} --set image.tag=$APP_TAG --kubeconfig=./kube/config
+        helm upgrade notejam-prod parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=$APP_TAG --kubeconfig=./kube/config
       continue-on-error: true
     - name: Rollback Prod
       if: steps.deploy-prod.outcome == 'failure'
