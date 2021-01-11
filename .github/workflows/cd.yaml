@@ -71,13 +71,13 @@ jobs:
         helm plugin install https://github.com/futuresimple/helm-secrets
         helm plugin install https://github.com/databus23/helm-diff --version master
         pwd
-        mkdir -p '$HOME/.kube'
-        echo '${{ secrets.KUBECONFIG_DATA}}' > $HOME/.kube/config
+        mkdir -p '.kube'
+        echo '${{ secrets.KUBECONFIG_DATA}}' > .kube/config
     - name: Deploy to Staging
       id: deploy-staging
       if: github.ref == 'refs/heads/develop'
       run: |
-        helm upgrade notejam-staging charts/notejam --install --set image.tag=$APP_TAG
+        helm upgrade notejam-staging charts/notejam --install --set image.tag=$APP_TAG --kubeconfig=./kube/config
       continue-on-error: true
     - name: Rollback Staging
       if: steps.deploy-staging.outcome == 'failure'
@@ -87,7 +87,7 @@ jobs:
       id: deploy-prod
       if: github.ref == 'refs/heads/master'
       run: |
-        helm upgrade notejam-prod charts/notejam --install --set image.tag=$APP_TAG 
+        helm upgrade notejam-prod charts/notejam --install --set image.tag=$APP_TAG --kubeconfig=./kube/config
       continue-on-error: true
     - name: Rollback Prod
       if: steps.deploy-prod.outcome == 'failure'
