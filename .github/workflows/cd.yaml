@@ -76,7 +76,7 @@ jobs:
       id: deploy-staging
       if: github.ref == 'refs/heads/develop'
       run: |
-        helm upgrade notejam-staging parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=sha-${APP_TAG} --set service.type=NodePort --kubeconfig=kube_config
+        helm upgrade notejam-staging parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=sha-${APP_TAG} --set service.type=NodePort --kubeconfig=kube_config --debug
       continue-on-error: true
     - name: Rollback Staging
       if: steps.deploy-staging.outcome == 'failure'
