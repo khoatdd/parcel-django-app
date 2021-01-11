@@ -70,25 +70,34 @@ jobs:
         helm plugin install https://github.com/futuresimple/helm-secrets
         helm plugin install https://github.com/databus23/helm-diff --version master
         helm repo add parcel https://khoatdd.github.io/parcel-helm-charts
+        helm repo update
         echo '${{ secrets.KUBECONFIG_DATA}}' > kube_config
         chmod 600 kube_config
     - name: Deploy to Staging
       id: deploy-staging
       if: github.ref == 'refs/heads/develop'
       run: |
-        helm upgrade notejam-staging parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=sha-${APP_TAG} --kubeconfig=kube_config
+        helm upgrade notejam-staging parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=sha-${APP_TAG} --set service.type=NodePort --kubeconfig=kube_config --debug \
+          --set dbcreds.username=${DB_USER} --set dbcreds.password=${DB_PASSWORD}
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       continue-on-error: true
     - name: Rollback Staging
       if: steps.deploy-staging.outcome == 'failure'
       run:
-        helm rollback notejam-staging 0
+        helm rollback notejam-staging 0 --kubeconfig=kube_config
     - name: Deploy to Prod
       id: deploy-prod
       if: github.ref == 'refs/heads/main'
       run: |
-        helm upgrade notejam-prod parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=sha-${APP_TAG} --kubeconfig=kube_config
+        helm upgrade notejam-prod parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=sha-${APP_TAG} --set service.type=NodePort --kubeconfig=kube_config \
+          --set dbcreds.username=${DB_USER} --set dbcreds.password=${DB_PASSWORD}
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       continue-on-error: true
     - name: Rollback Prod
       if: steps.deploy-prod.outcome == 'failure'
       run:
-        helm rollback notejam-prod 0
+        helm rollback notejam-prod 0 --kubeconfig=kube_config
