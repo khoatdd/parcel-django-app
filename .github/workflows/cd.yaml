@@ -74,7 +74,7 @@ jobs:
         chmod 600 kube_config
     - name: Deploy to Staging
       id: deploy-staging
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/develop'
       run: |
         helm upgrade notejam-staging parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=$APP_TAG --kubeconfig=kube_config
       continue-on-error: true
@@ -86,7 +86,7 @@ jobs:
       id: deploy-prod
       if: github.ref == 'refs/heads/main'
       run: |
-        helm upgrade notejam-prod parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=$APP_TAG --kubeconfig=./kube/config
+        helm upgrade notejam-prod parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=$APP_TAG --kubeconfig=kube_config
       continue-on-error: true
     - name: Rollback Prod
       if: steps.deploy-prod.outcome == 'failure'
