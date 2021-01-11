@@ -64,7 +64,7 @@ jobs:
     #     retrieve_variables: TAGS, APP_TAG
     - name: Install dependencies
       run: |
-        apk add --update --no-cache gnupg groff less mailcap build-base python3-dev python3 libffi-dev libressl-dev gettext curl git
+        apk add --update --no-cache gnupg groff less mailcap build-base python3-dev python3 libffi-dev libressl-dev gettext curl git bash
         curl -O https://bootstrap.pypa.io/get-pip.py
         python3 get-pip.py
         pip install --upgrade awscli==1.18.21 s3cmd==2.0.1 python-magic
