@@ -70,8 +70,9 @@ jobs:
         pip install --upgrade awscli==1.18.21 s3cmd==2.0.1 python-magic
         helm plugin install https://github.com/futuresimple/helm-secrets
         helm plugin install https://github.com/databus23/helm-diff --version master
+        pwd
         mkdir -p '$HOME/.kube'
-        echo '${{ secrets.KUBECONFIG_DATA}}' | base64 -d > $HOME/.kube/config
+        echo '${{ secrets.KUBECONFIG_DATA}}' > $HOME/.kube/config
     - name: Deploy to Staging
       id: deploy-staging
       if: github.ref == 'refs/heads/develop'
