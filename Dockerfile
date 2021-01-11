@@ -16,4 +16,4 @@ COPY ./notejam /app
 EXPOSE 8000
 
 # define the default command to run when starting the container
-CMD ["gunicorn", "--chdir", "notejam", "--bind", ":8000", "notejam.wsgi:application"]
+CMD ["gunicorn", "--chdir", "notejam", "--bind", ":80", "notejam.wsgi:application"]
