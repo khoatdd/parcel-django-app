@@ -85,15 +85,18 @@ jobs:
     - name: Rollback Staging
       if: steps.deploy-staging.outcome == 'failure'
       run:
-        helm rollback notejam-staging 0
+        helm rollback notejam-staging 0 --kubeconfig=kube_config
     - name: Deploy to Prod
       id: deploy-prod
       if: github.ref == 'refs/heads/main'
       run: |
         helm upgrade notejam-prod parcel/notejam --install --set image.repository=${DOCKER_REPO} --set image.tag=sha-${APP_TAG} --set service.type=NodePort --kubeconfig=kube_config \
           --set dbcreds.username=${DB_USER} --set dbcreds.password=${DB_PASSWORD}
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       continue-on-error: true
     - name: Rollback Prod
       if: steps.deploy-prod.outcome == 'failure'
       run:
-        helm rollback notejam-prod 0
+        helm rollback notejam-prod 0 --kubeconfig=kube_config
