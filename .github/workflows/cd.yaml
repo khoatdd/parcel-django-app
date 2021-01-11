@@ -70,6 +70,7 @@ jobs:
         helm plugin install https://github.com/futuresimple/helm-secrets
         helm plugin install https://github.com/databus23/helm-diff --version master
         helm repo add parcel https://khoatdd.github.io/parcel-helm-charts
+        helm repo update
         echo '${{ secrets.KUBECONFIG_DATA}}' > kube_config
         chmod 600 kube_config
     - name: Deploy to Staging
